@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+
+// **********************************************************************
+//  Purpose: Handling Server
+//  SN  Date       Change Description      Modified By
+//  1   29/03/2022     Base Version        Ritesh
+// **********************************************************************
+
+/**
+ * @file app.js
+ * @summary Create and expose express app instance
+ * @description This file is responsible for creating instance of express and initializing swagger. All application specific
+ * middleware will be used here.
+ * The app instance along with the express router are exposed to be used by HTTP server.
+ * */
+
+/* Module dependencies. */
+const path = require("path");
+const { createServer } = require("http");
+const { app } = require("../server");
+const { constants } = require(path.join(__basedir, "app", "config"));
+const { PORT } = constants;
+const server = createServer(app);
+
+// Event listeners to catch uncaught errors
+process.on("unhandledRejection", (error) => {
+  console.log(error.message, { time: new Date() });
+  process.exit(1);
+});
+
+process.on("exit", (code) => {
+  console.log(`Exiting with code: ${code}`);
+});
+
+server.listen(PORT, (err) => {
+  if (err) {
+    return console.log(`Something went wrong: \n${err}`);
+  }
+  console.log(`Server is listening on port: ${PORT}`);
+});
